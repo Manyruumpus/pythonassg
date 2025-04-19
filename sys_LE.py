@@ -1,49 +1,72 @@
 import numpy as np
-
-try:
-    import scipy.sparse as sparse
-    import scipy.sparse.linalg as splinalg
-except ImportError:
-    sparse = None
-    splinalg = None
-
-def solve_system(A, b, use_iterative=False, tolerance=1e-8):
-    # Solves Ax = b using either direct method or CG (if sparse & asked).
-    A = np.array(A) if sparse is None or not sparse.issparse(A) else A
-    b = np.array(b, dtype=float).flatten()
-
-    n = A.shape[0]
-    if A.shape[0] != A.shape[1]:
-        raise ValueError("Matrix A must be square.")
-    if b.shape[0] != n:
-        raise ValueError("Vector b must match A in dimensions.")
-
-    if not use_iterative or sparse is None or not sparse.issparse(A):
-        try:
-            return np.linalg.solve(A, b)
-        except np.linalg.LinAlgError:
-            raise ValueError("Direct solver failed. Check if A is singular.")
+import scipy.sparse as sp
+import scipy.sparse.linalg as spla
+#  install spicy and sparse first 
+def solve_linear_system(A_input, b_input, use_iter=False, tol=1e-8):
+    #  to solve Ax = b using direct or iterative (CG) method
+    # first make sure inputs are in usable form
+    if sp.issparse(A_input):
+        A = A_input
     else:
-        A_sparse = A if sparse.issparse(A) else sparse.csr_matrix(A)
-        x, info = splinalg.cg(A_sparse, b, tol=tolerance)
-        if info != 0:
-            raise ValueError("Conjugate Gradient failed to converge.")
+        A = np.array(A_input)
+
+    b = np.array(b_input, dtype=float).flatten() 
+
+    # Sanity checks
+    if A.shape[0] != A.shape[1]:
+        raise ValueError("Matrix A needs to be square.")
+    
+    if b.shape[0] != A.shape[0]:
+        raise ValueError("Length of b doesn't match A's dimensions.")
+
+    # Decide between direct or CG solve
+    if not use_iter or not sp.issparse(A):
+        try:
+            return np.linalg.solve(A, b)  # plain ol' direct method
+        except np.linalg.LinAlgError:
+            raise ValueError("Direct solve failed — maybe A is singular?")
+    else:
+        #  using Conjugate Gradient method
+        if not sp.issparse(A):
+            A = sp.csr_matrix(A)  # convert to CSR format if needed
+
+        # CG method expects a tolerance — using rtol here 
+        x, status = spla.cg(A, b, rtol=tol)
+
+        if status != 0:
+            #  status > 0 means no convergence, < 0 means illegal input
+            raise ValueError(f"CG method didn't converge (status code: {status})")
+
         return x
 
-# Test example
+
+# Tests 
 if __name__ == "__main__":
-    A1 = np.array([[4, 1], [1, 3]])
+    # Basic small system (dense)
+    A1 = np.array([[4, 1],
+                   [1, 3]])
     b1 = np.array([1, 2])
-    x1 = solve_system(A1, b1)
-    print("Solution (direct):", x1)
 
-    if sparse is not None:
-        # basic sparse system
-        size = 1000
-        main_diag = 2 * np.ones(size)
-        side_diag = -1 * np.ones(size - 1)
-        A_sparse = sparse.diags([side_diag, main_diag, side_diag], [-1, 0, 1])
-        b_sparse = np.ones(size)
+    print("Trying small dense system...")
+    try:
+        x1 = solve_linear_system(A1, b1)
+        print("Solution x:", x1)
+    except ValueError as err:
+        print("Error in dense solve:", err)
 
-        x2 = solve_system(A_sparse, b_sparse, use_iterative=True, tolerance=1e-6)
-        print("First few entries of sparse solution:", x2[:5])
+    # Now testing sparse solve with a big matrix
+    print("\nSolving a large sparse system (1000 x 1000)...")
+
+    N = 1000
+    main_diag = 2 * np.ones(N)
+    side_diag = -1 * np.ones(N - 1)
+
+    # Create tridiagonal sparse matrix
+    A_sparse = sp.diags([side_diag, main_diag, side_diag], offsets=[-1, 0, 1])
+    b_sparse = np.ones(N)
+
+    try:
+        x2 = solve_linear_system(A_sparse, b_sparse, use_iter=True, tol=1e-6)
+        print("First 5 values of solution:", x2[:5])  # No need to print it all
+    except ValueError as e:
+        print("Sparse solver failed:", e)
