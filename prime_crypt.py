@@ -1,40 +1,59 @@
 import math
 
-def prime_n_sum(n):
+def nprimesum(n):
     if n < 1:
-        raise ValueError("Input must be a positive number!")
+        raise ValueError("input must be a positive number!")  # Still keeping this guard in place
+
+    # For small numbers, just go with a safe limit
     if n < 6:
-        limit = 15
+        uplim = 15
     else:
-        # rough estimate of the nth prime
-        limit = int(n * (math.log(n) + math.log(math.log(n)))) + 5
+        # formula from some forum – might revisit later
+        uplim = int(n * (math.log(n) + math.log(math.log(n)))) + 5
 
     while True:
-        # mark primes using a simple boolean array
-        sieve = [True] * (limit + 1)
-        sieve[0] = sieve[1] = False  # Not primes
+        #  the sieve method
+        isprime = [True] * (uplim + 1)
+        isprime[0] = False
+        isprime[1] = False
 
-        primes = []
+        prime_list = []
 
-        for num in range(2, limit + 1):
-            if sieve[num]:
-                primes.append(num)
+        # Basic Sieve of Eratosthenes
+        for num in range(2, uplim + 1):
+            if isprime[num]:
+                prime_list.append(num)
 
-                # cross out all multiples of this prime
-                for j in range(num * num, limit + 1, num):
-                    sieve[j] = False
+                # remove all multiples
+                for factor in range(num*num, uplim + 1, num):
+                    isprime[factor] = False
 
-                if len(primes) >= n:
-                    break  
-        if len(primes) >= n:
-            total = 0
-            for i in range(n):
-                total += primes[i]
-            return total  
+                # No need to keep going if we got 
+                if len(prime_list) >= n:
+                    break
 
-        limit *= 2
+        if len(prime_list) >= n:
+            # Summing up the first n primes 
+            total_sum = 0
+            for idx in range(n):
+                total_sum += prime_list[idx]
+            return total_sum
 
-n = input("Enter a number: ")
-ans = prime_n_sum(int(n))
-print("SUM OF FIRST " + n +  " PRIME NUMBERS IS:", end = " ")
-print (ans)
+        # If we didn’t find enough primes, just try a bigger limit
+        uplim *= 2  # brute force
+
+
+#  Main bit starts 
+
+p = input("Enter a number: ")
+
+try:
+    p_num = int(p)
+except:
+    print("Please enter a valid integer.")
+    quit()
+
+ans= nprimesum(p_num)
+
+print("SUM OF FIRST " + p +  " PRIME NUMBERS IS:", end = " ")
+print(ans)
