@@ -1,0 +1,134 @@
+📂 Assignment 1: input_validation.py
+🎯 Purpose:
+Validates user inputs from the command line. Accepts inputs like integers, floats, and strings with specific constraints.
+✅ Features:
+Input validation with constraints.
+
+
+Graceful handling of incorrect input types or values.
+
+
+Demonstrates defensive programming.
+
+
+
+🎮 Assignment 2: rps_game.py
+🎯 Purpose:
+Implements a Rock-Paper-Scissors game with ASCII art and score tracking.
+✅ Features:
+Play against the computer.
+
+
+ASCII visuals for each move.
+
+
+Score tracking until a player wins 3 rounds.
+
+
+Random move generation for the computer.
+
+
+🧪 Example Output:
+diff
+CopyEdit
+You chose Rock:
+    _______
+---'   ____)
+      (_____)
+      (_____)
+      (____)
+---.__(___)
+
+
+Computer chose Scissors:
+    _______
+---'   ____)____
+          ______)
+       __________)
+      (____)
+---.__(___)
+
+
+You win this round!
+Score: You 1 - Computer 0
+
+
+
+🔢 Assignment 3: sum_primes.py
+🎯 Purpose:
+Computes the sum of all prime numbers below a user-defined upper limit using the Sieve of Eratosthenes.
+✅ Features:
+Efficient prime number calculation.
+
+
+User-defined upper limit.
+
+
+Demonstrates use of boolean arrays for sieving.
+
+
+
+
+
+🌡️ Assignment 4: temperature_analysis.py
+🎯 Purpose:
+Analyzes a list of temperature values provided by the user and computes statistics like average, median, and standard deviation.
+✅ Features:
+Input multiple temperatures.
+
+
+Calculates min, max, mean, median, and standard deviation.
+
+
+Handles non-numeric input gracefully.
+
+
+🧪 Example Output:
+Enter temperature readings separated by commas: 21, 25, 30, 28, 26
+Average temperature: 26.0°C
+Median temperature: 26.0°C
+Standard deviation: 3.16°C
+
+
+
+📊 Assignment 5: solve_linear_system.py
+🎯 Purpose:
+Solves a system of linear equations from user input. Supports dense and sparse matrix representations.
+✅ Features:
+Accepts matrix and vector input via CLI.
+
+
+Solves using NumPy for dense matrices and SciPy for sparse.
+
+
+Error handling for invalid or singular matrices.
+
+
+🧪 Example Use:
+Enter number of equations: 2
+Enter coefficient matrix row-wise:
+1 2
+3 4
+Enter constant terms: 5 11
+Solution: [1. 2.]
+
+
+
+🧪 Assignment 6: generate_dataset_plot.py
+🎯 Purpose:
+Generates synthetic datasets (linear, quadratic, sinusoidal) and plots them using matplotlib.
+✅ Features:
+Option to generate different types of data.
+
+
+Customizable number of points.
+
+
+Saves plots as image files.
+
+
+Adds noise to simulate real-world data.
+
+
+
+
