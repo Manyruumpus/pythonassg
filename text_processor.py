@@ -1,43 +1,56 @@
-n_input = input("Enter the registration number: ")
+# inputs 
+n = input("Enter the reg no.: ")
 s = input("Enter the string (containing only letters): ")
 
-# 2. Validate input
+#  validate inputs 
 try:
-    n = int(n_input)
-    if n <= 0:
-        print("REGISTRATION NUMBER MUST BE A POSITIVE INTEGER")
+    num = int(n)
+    if num <= 0:
+        print("invalid reg number, it should be positive")
         quit()
-except ValueError:
-    print("Invalid registration number. Must be an integer.")
-    quit()
-
+except:
+    print("invalid registration number, it should be an integer.")
+    quit() 
+# string – should only be letters
 if not s.isalpha():
-    print("STRING MUST CONTAIN ONLY LETTERS")
+    print("Invalid string.")
     quit()
 
-if n % 2 == 0:
-    processed = s[::-1]
+#  process string on whether num is odd or even
+# if even:reverse 
+if num % 2 == 0:
+    result_s = s[::-1]
 else:
+    # odd:transform vowels to uppercase ans so
     vowels = "aeiouAEIOU"
-    processed = ''.join(
-        ch.upper() if ch in vowels else ch.lower()
-        for ch in s
-    )
+    chars = []
+    for ch in s:
+        if ch in vowels:
+            chars.append(ch.upper())
+        else:
+            chars.append(ch.lower())
+    result_s = ''.join(chars)  # rebuild the string
 
-k = bin(n).count('1')
+#  number of 1 in num binary
+bit1 = bin(num).count('1')
 
-# 5. Part 3 – extract_substrings of length k
-substrings = []
-# if k is 0 (possible only if n==0, but we've ruled that out), we’d skip.
-for i in range(len(processed) - k + 1):
-    substrings.append(processed[i:i+k])
+#  all substrings of length bit count 
 
-# 6. Part 4 – sort_or_reverse based on (n & len(s)) == 0
-if (n & len(s)) == 0:
-    substrings.sort()
+substr = []
+# if the count is not zero
+if bit1 > 0:
+    for idx in range(len(result_s) - bit1 + 1):
+        piece = result_s[idx:idx+bit1]
+        substr.append(piece)
+# else: don't do anything
+
+#  sorting or reversing 
+if (num & len(s)) == 0:
+    substr.sort()  # simple sort
 else:
-    substrings.reverse()
+    substr = substr[::-1]  # flipping the list entirely
 
-# 7. Output
+# final output 
+
 print("Output:")
-print(' '.join(substrings))
+print(' '.join(substr))  # Output all substrings space-separated
