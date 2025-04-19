@@ -1,43 +1,45 @@
-import statistics
+import statistics as s 
 
-def analyze_temperatures(temps):
-    if not temps:
-        raise ValueError("Temperature list is empty; cannot compute statistics.")
+def get_temp_stats(temp_readings):
+    if len(temp_readings) == 0:
+        raise ValueError("Whoops — can't analyze an empty list of temps.")
 
-    n = len(temps)
-    mean_val = statistics.mean(temps)
-    median_val = statistics.median(temps)
+    count = len(temp_readings)
+    
+    # Grab the basic stats
+    avg_temp = s.mean(temp_readings)
+    mid_val = s.median(temp_readings)
 
-    #  variance and stdev, need n ≥ 2; otherwise define as 0.0
-    if n > 1:
-        var_val = statistics.variance(temps)        # divides by (n-1)
-        std_dev_val = statistics.stdev(temps)       # sqrt of sample variance
+    # if only one reading then direct ans 
+    if count > 1:
+        temp_variance = s.variance(temp_readings)  # using sample variance (n-1)
+        std_dev = s.stdev(temp_readings)
     else:
-        var_val = 0.0
-        std_dev_val = 0.0
+        temp_variance = 0.0   # let default this
+        std_dev = 0.0         
 
     return {
-        "mean": mean_val,
-        "median": median_val,
-        "variance": var_val,
-        "standard_deviation": std_dev_val
+        "mean": avg_temp,
+        "median": mid_val,
+        "variance": temp_variance,
+        "standard_deviation": std_dev
     }
 
-# Example usage
+# Quick testing below ,basic sanity check
 if __name__ == "__main__":
-    datasets = [
-        [],                    # empty
-        [15.2],                # single reading
-        [12.0, 15.5, 14.3, 13.8, 16.1]
+    sample_datasets = [
+        [],                      # empty case, should raise error
+        [15.2],                  # single item — edge case for variance
+        [12.0, 15.5, 14.3, 13.8, 16.1]  # normal dataset
     ]
 
-    for temps in datasets:
-        print(f"\nData: {temps}")
+    for readings in sample_datasets:
+        print(f"\nProcessing temps: {readings}")
         try:
-            stats = analyze_temperatures(temps)
-            print(f"Mean:               {stats['mean']:.2f}")
-            print(f"Median:             {stats['median']:.2f}")
-            print(f"Sample Variance:    {stats['variance']:.4f}")
-            print(f"Sample Std Deviation:{stats['standard_deviation']:.4f}")
-        except ValueError as e:
-            print("Error:", e)
+            result = get_temp_stats(readings)
+            print(f"Average:           {result['mean']:.2f}")
+            print(f"Median:            {result['median']:.2f}")
+            print(f"Variance:          {result['variance']:.4f}")
+            print(f"Std Deviation:     {result['standard_deviation']:.4f}")
+        except ValueError as problem:
+            print("Something went wrong:", problem)
